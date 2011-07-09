@@ -1,0 +1,13 @@
+
+    <RelativeLayout android:id="@+id/relativeLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:background="@drawable/bg">
+        <RelativeLayout android:layout_alignParentTop="true" android:id="@+id/relativeLayout2" android:layout_width="match_parent" android:gravity="center_vertical" android:background="@drawable/barbg" android:layout_height="wrap_content">
+            <Button android:layout_alignParentLeft="true" android:layout_height="wrap_content" android:id="@+id/backButton" android:text="@string/back" android:layout_width="80dip" android:layout_marginTop="5dip"></Button>
+            <TextView android:layout_width="wrap_content" android:text="TextView" android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_toRightOf="@+id/backButton" android:textSize="30dip" android:layout_marginLeft="20dip" android:textColor="#FFFFFF" android:layout_marginTop="10dip"></TextView>
+        </RelativeLayout>
+        <sct.View.PlayView android:id="@+id/sudokuView1" android:layout_below="@+id/relativeLayout2" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginBottom="50dip"></sct.View.PlayView>
+        <RelativeLayout android:layout_height="wrap_content" android:id="@+id/relativeLayout3" android:layout_alignParentBottom="true" android:layout_width="match_parent" android:background="@drawable/barbg">
+            <ToggleButton android:layout_width="wrap_content" android:id="@+id/automarkButton" android:layout_height="wrap_content" android:layout_toRightOf="@+id/textView2" android:textOff="@string/automark" android:textOn="@string/automark" android:layout_marginTop="5dip"></ToggleButton>
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@+id/automarkButton" android:id="@+id/resetButton" android:text="@string/reset" android:layout_marginTop="3dip"></Button>
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:id="@+id/hintButton" android:text="@string/hint" android:layout_marginTop="3dip"></Button>
+        </RelativeLayout>
+    </RelativeLayout>

@@ -4,4 +4,8 @@
     <string name="Hello">Welcome to Sudoku by scturtle!</string>
     <string name="_continue">Continue</string>
     <string name="newgame">New Game</string>
+    <string name="back">Back</string>
+    <string name="automark">Automark</string>
+    <string name="reset">reset</string>
+    <string name="hint">Hint</string>
 </resources>
