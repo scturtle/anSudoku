@@ -1,5 +1,7 @@
 package sct.View;
 
+import sct.Lib.DigHoles;
+import sct.Lib.RandomFullSudoku;
 import sct.Lib.Sudoku;
 import sct.Lib.Unit;
 import android.content.Context;
@@ -20,16 +22,34 @@ public class PlayView extends View implements OnTouchListener {
     Paint paint = new Paint();
     int lightblue= Color.rgb(164, 209, 255);
     int lightgray= Color.rgb(200, 200, 200);
+    int[][] ans;
     
     private Sudoku sudoku;
 
     private void init(){
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-        this.setOnTouchListener(this);
-        sudoku=new Sudoku();
-		paint.setStyle(Style.FILL);
-		paint.setAntiAlias(true);
+    	setFocusable(true);
+    	setFocusableInTouchMode(true);
+    	this.setOnTouchListener(this);
+    	sudoku=new Sudoku();
+    	paint.setStyle(Style.FILL);
+    	paint.setAntiAlias(true);
+    }
+    public void generateSudoku(int holes){
+		ans=RandomFullSudoku.getSudoku();
+		int[][] m=ans.clone(), mc=ans.clone();
+		int times=0;
+		long start=System.currentTimeMillis(); 
+		while(!DigHoles.tryDig(m,holes)) {m=mc.clone();times++;}
+		long end=System.currentTimeMillis(); 
+		System.out.printf("Try:%dtimes using:%dms\n",times,end-start);
+		
+    	for(int i=1;i<=9;i++)
+    		for(int j=1;j<=9;j++)
+    		{
+    			if(m[i][j]!=0)
+    				sudoku.unit[i-1][j-1].settype(Unit.Type.fix);
+    				sudoku.unit[i-1][j-1].setNum(m[i][j]);
+    		}
     }
     
     public PlayView(Context context) {
@@ -47,14 +67,6 @@ public class PlayView extends View implements OnTouchListener {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);     
         
-        sudoku.unit[0][0].settype(Unit.Type.fix);
-        sudoku.unit[0][0].setNum(1);
-        sudoku.unit[0][0].setbg(Unit.Bg.gray);
-        sudoku.unit[0][1].setNum(1);
-        sudoku.unit[0][1].setbg(Unit.Bg.blue);
-        sudoku.unit[1][0].settype(Unit.Type.mark);
-        for(int i=1;i<=9;i++)
-        	sudoku.unit[1][0].setMark(i);
         drawSudoku(canvas);
         drawEdge(canvas);
     }
@@ -66,8 +78,7 @@ public class PlayView extends View implements OnTouchListener {
      */
     void drawSudoku(Canvas canvas){
     	for(int i=0;i<9;i++)
-    		for(int j=0;j<9;j++)
-    		{
+    		for(int j=0;j<9;j++) {
     			Unit u = sudoku.unit[i][j];
     			
     			// draw unit background
@@ -131,11 +142,13 @@ public class PlayView extends View implements OnTouchListener {
     }
     
     public boolean onTouch(View view, MotionEvent event) {
-    	int i=(int)((event.getX()-xo)/9);
-    	int j=(int)((event.getY()-yo)/9);
-        System.out.printf("i:%d j:%d\n",i,j);
+//    	int i=(int)((event.getX()-xo)/9);
+//    	int j=(int)((event.getY()-yo)/9);
+//        System.out.printf("i:%d j:%d\n",i,j);
 //        dosomething
-//        invalidate();
-        return true;
+//    	sudoku.unit[0][8].setNum(sudoku.unit[0][8].getNum()+1);
+//    	invalidate();
+//        return true;
+    	return false;
     }
 }
