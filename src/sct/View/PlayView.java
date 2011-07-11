@@ -23,7 +23,12 @@ public class PlayView extends View implements OnTouchListener {
     Paint paint = new Paint();
     int lightblue= Color.rgb(164, 209, 255);
     int lightgray= Color.rgb(200, 200, 200);
+    int lightyello=Color.rgb(255, 255, 128);
     int[][] ans=null;
+    
+    float wp=w/9*4,hp=wp/3*4; 
+    int pi=0,pj=0;
+    boolean padOnShow=false,padOnMark=false;
     
     private Sudoku sudoku;
 
@@ -35,6 +40,12 @@ public class PlayView extends View implements OnTouchListener {
     	paint.setStyle(Style.FILL);
     	paint.setAntiAlias(true);
     }
+    
+    /*
+     * function: generate the first sudoku
+     * input: number of holes
+     * output: none
+     */
     public void generateSudoku(int holes){
 		long start=System.currentTimeMillis(); 
 		int [][]m = null;
@@ -71,6 +82,8 @@ public class PlayView extends View implements OnTouchListener {
         
         drawSudoku(canvas);
         drawEdge(canvas);
+        padOnShow=true;
+        drawPad(canvas);
     }
     
     
@@ -143,6 +156,52 @@ public class PlayView extends View implements OnTouchListener {
         	canvas.drawLine(xo, w/9*i+yo, w+xo, w/9*i+yo, paint);
     }
     
+    /*
+     * function: draw pad to imput number
+     */
+    void drawPad(Canvas canvas){
+    	int xop=10,yop=60;//todo
+    	
+    	if(!padOnShow) return;
+    	
+    	//draw fill
+    	paint.setColor(lightyello);
+    	canvas.drawRect(xop, yop, xop+wp, yop+hp, paint);
+    	
+    	//edge
+        paint.setStrokeWidth(3);
+    	paint.setColor(Color.BLACK);
+        for(int i=0;i<=3;i++)
+        	canvas.drawLine(wp/3*i+xop, yop, wp/3*i+xop, hp+yop, paint);
+        for(int i=0;i<=4;i++)
+        	canvas.drawLine(xop, hp/4*i+yop, wp+xop, hp/4*i+yop, paint);
+        
+        //number
+        if(!padOnMark){
+        	paint.setTextSize(48);
+        	for(int i=0;i<3;i++)
+        		for(int j=0;j<3;j++)
+        			canvas.drawText(""+(i*3+j+1), 20+wp/3*j+xop, 50+hp/4*i+yop, paint);
+        }
+        else{
+        	paint.setTextSize(16);
+        	for(int i=0;i<3;i++)
+        		for(int j=0;j<3;j++)
+        			if(true)//todo
+        				canvas.drawText(""+(i*3+j+1),
+        						10+wp/3*j+wp/9*j +xop,
+        						18+hp/4*i+hp/12*i+yop,
+        						paint);
+        	
+        }
+        
+        // mark switch and exit
+    	paint.setTextSize(16);
+		canvas.drawText("mark", 15+xop, 40+hp/4*3+yop, paint);
+    	paint.setTextSize(48);
+		canvas.drawText("X", 20+wp/3*2+xop, 50+hp/4*3+yop, paint);
+    }
+    
     public boolean onTouch(View view, MotionEvent event) {
 //    	int i=(int)((event.getX()-xo)/9);
 //    	int j=(int)((event.getY()-yo)/9);
@@ -151,7 +210,7 @@ public class PlayView extends View implements OnTouchListener {
 //    	sudoku.unit[0][8].setNum(sudoku.unit[0][8].getNum()+1);
 //    	invalidate();
 //        return true;
-    	return false;
+    	return true;
     }
 
 //    public void MessageBox(String message){
