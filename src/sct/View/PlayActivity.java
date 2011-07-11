@@ -7,22 +7,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+//import android.widget.Toast;
 
 public class PlayActivity extends Activity {
-    /** Called when the activity is first created. */
+	
+	String noh;
+	
 	private ProgressDialog progressDialog;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play);
         
-    	///////////////////
+        Bundle bundle = getIntent().getExtras();    
+        noh=bundle.getString("NOH");
+        
     	progressDialog = ProgressDialog.show(
     			PlayActivity.this, "", "Generating sudoku ......", true, false);
     	new Thread() {
     		@Override
     		public void run() {
-    			((PlayView)findViewById(R.id.sudokuView1)).generateSudoku(50);
+    			((PlayView)findViewById(R.id.sudokuView1)).generateSudoku(Integer.parseInt(noh));
     			progressDialog.dismiss();
     		}
     	}.start();
@@ -37,4 +42,5 @@ public class PlayActivity extends Activity {
 			}
         });
     }
+    
 }

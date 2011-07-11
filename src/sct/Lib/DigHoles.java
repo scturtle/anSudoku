@@ -1,10 +1,14 @@
 package sct.Lib;
+import java.lang.reflect.Array;
 import java.util.Random;
 
 
 public class DigHoles{
 	static int[][] randomDig(int[][] om,int holes){
 		int[][] m=om.clone();
+        for (int i = 0; i  < om.length; i ++){
+        	m[i] = om[i].clone();  
+        }
 		int remains=81;
 		Random r=new Random();
 		for(int i=1;i<=9 && remains!=0;i++)
@@ -18,6 +22,25 @@ public class DigHoles{
 		return m;
 	}
 	
+	public static Object tryDigLoop(int holes){
+		Object arr= Array.newInstance(Object.class, 3);
+		int[][] m=RandomFullSudoku.getSudoku();
+		int[][] res=m.clone();
+        for (int i = 0; i  < m.length; i ++){
+        	res[i] = m[i].clone();  
+        }
+		int times=0;
+		while(!tryDig(res,holes)) {
+			for (int i = 0; i  < m.length; i ++){
+				res[i] = m[i].clone();  
+			}
+			times++;
+		}
+		Array.set(arr, 0, m);
+		Array.set(arr, 1, res);
+		Array.set(arr, 2, times);
+		return arr;
+	}
 	public static boolean tryDig(int[][] m,int holes){
 		int[] arr=new int[81];
 		int c=0;
@@ -55,9 +78,17 @@ public class DigHoles{
 	public static void main(String args[]){
 		int[][] m=RandomFullSudoku.getSudoku();
 		int[][] mc=m.clone();
+        for (int i = 0; i  < m.length; i ++){
+        	mc[i] = m[i].clone();  
+        }
 		int times=0;
 		long start=System.currentTimeMillis(); 
-		while(!tryDig(m,55)) {m=mc.clone();times++;}
+		while(!tryDig(m,55)) {
+			for (int i = 0; i  < mc.length; i ++){
+				m[i] = mc[i].clone();  
+			}
+			times++;
+		}
 		long end=System.currentTimeMillis(); 
 		print(m);
 		System.out.printf("Try:%dtimes using:%dms\n",times,end-start);

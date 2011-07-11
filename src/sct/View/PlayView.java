@@ -1,7 +1,8 @@
 package sct.View;
 
+import java.lang.reflect.Array;
+
 import sct.Lib.DigHoles;
-import sct.Lib.RandomFullSudoku;
 import sct.Lib.Sudoku;
 import sct.Lib.Unit;
 import android.content.Context;
@@ -22,7 +23,7 @@ public class PlayView extends View implements OnTouchListener {
     Paint paint = new Paint();
     int lightblue= Color.rgb(164, 209, 255);
     int lightgray= Color.rgb(200, 200, 200);
-    int[][] ans;
+    int[][] ans=null;
     
     private Sudoku sudoku;
 
@@ -35,11 +36,12 @@ public class PlayView extends View implements OnTouchListener {
     	paint.setAntiAlias(true);
     }
     public void generateSudoku(int holes){
-		ans=RandomFullSudoku.getSudoku();
-		int[][] m=ans.clone(), mc=ans.clone();
-		int times=0;
 		long start=System.currentTimeMillis(); 
-		while(!DigHoles.tryDig(m,holes)) {m=mc.clone();times++;}
+		int [][]m = null;
+		Object arr = DigHoles.tryDigLoop(holes);
+		ans=(int[][])Array.get(arr, 0);
+		m=(int[][])Array.get(arr, 1);
+		int times=(Integer) Array.get(arr, 2);
 		long end=System.currentTimeMillis(); 
 		System.out.printf("Try:%dtimes using:%dms\n",times,end-start);
 		
@@ -151,4 +153,8 @@ public class PlayView extends View implements OnTouchListener {
 //        return true;
     	return false;
     }
+
+//    public void MessageBox(String message){
+//    		Toast.makeText(this.getContext(),message,Toast.LENGTH_SHORT).show();
+//    }
 }
