@@ -31,9 +31,8 @@ public class DigHoles{
         }
 		int times=0;
 		while(!tryDig(res,holes)) {
-			for (int i = 0; i  < m.length; i ++){
+			for (int i = 0; i  < m.length; i ++)
 				res[i] = m[i].clone();  
-			}
 			times++;
 		}
 		Array.set(arr, 0, m);

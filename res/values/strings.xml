@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sudoku</string>
-    <string name="Hello">Welcome to Sudoku by scturtle!</string>
+    <string name="app_name">anSudoku</string>
+    <string name="Hello">Welcome to anSudoku by scturtle!</string>
     <string name="_continue">Continue</string>
     <string name="newgame">New Game</string>
     <string name="back">Back</string>

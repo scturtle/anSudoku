@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class HolesDialog extends Dialog {  
 	TextView text;
-	public int holes;
+	public int holes=15+38;
 	public boolean ok;
 
 	public HolesDialog(Context context) {
