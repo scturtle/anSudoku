@@ -19,19 +19,12 @@ public class Unit implements Serializable{
 		mark=0;
 	}
 	
-//	public boolean isFix(){return type==Type.fix;}
-//	public boolean isGuess(){return type==Type.guess;}
-//	public boolean isMark(){return type==Type.mark;}
-//	public void setFix(){type=Type.fix;}
-//	public void setGuess(){type=Type.guess;}
-//	public void setMark(){type=Type.mark;}
-//	
-//	public boolean isWhite(){return bg==Bg.white;}
-//	public boolean isBlue(){return bg==Bg.blue;}
-//	public boolean isGray(){return bg==Bg.gray;}
-//	public void setWhite(){bg=Bg.white;}
-//	public void setBlue(){bg=Bg.blue;}
-//	public void setGray(){bg=Bg.gray;}
+	public boolean isFixType(){return type==Type.fix;}
+	public boolean isGuessType(){return type==Type.guess;}
+	public boolean isMarkType(){return type==Type.mark;}
+	public void setFixType(){type=Type.fix;}
+	public void setGuessType(){type=Type.guess;}
+	public void setMarkType(){type=Type.mark;}
 
 	public Type gettype() { return type; }
 	public void settype(Type type) { this.type = type; }
@@ -43,8 +36,14 @@ public class Unit implements Serializable{
 		return type;
 	}
 
-	public void setNum(int num) { this.num = num; }
+	public void setNum(int num) { // side effect: clear all mark
+		this.num = num; 
+		mark=0;
+	}
 
+	public boolean isOnNum(){
+		return type==Type.fix || (type==Type.guess && num!=0);
+	}
 	public boolean isMark(int n) {
 		if(n>=1 && n<=9)
 			return ( mark & (1<<n) ) > 0;
