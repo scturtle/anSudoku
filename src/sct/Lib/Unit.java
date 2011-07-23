@@ -1,6 +1,10 @@
 package sct.Lib;
 
-public class Unit{
+import java.io.Serializable;
+
+public class Unit implements Serializable{
+	private static final long serialVersionUID = -3770040309571770996L;
+
 	public enum Type { fix,guess,mark };
 	public enum Bg { white,blue,gray };
 	Type type;
