@@ -168,6 +168,7 @@ public class PlayActivity extends Activity {
 						pv.postInvalidate();
 					}else if(action.equals("automarkOff")){
 						tb.setChecked(false);
+						pv.automark=false;
 					}else if(action.equals("automarkReset")){
 						pv.automarkAll();
 						pv.postInvalidate();
