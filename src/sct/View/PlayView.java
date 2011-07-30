@@ -377,7 +377,7 @@ public class PlayView extends View implements OnTouchListener{
 		int[] arr=new int[81];
 		int top=0;
 		for(int i=0;i<9;i++) for(int j=0;j<9;j++)
-			if(!sudoku.unit[i][j].isMarkType())
+			if(sudoku.unit[i][j].isMarkType())
 				arr[top++]=i*10+j;
 		if(top==0) return;
 		
@@ -388,7 +388,7 @@ public class PlayView extends View implements OnTouchListener{
 			sudoku.unit[i][j].setbg(Unit.Bg.white);
 		
 		int luck=r.nextInt(top);
-		int li=luck/10,lj=luck%10;
+		int li=arr[luck]/10,lj=arr[luck]%10;
 //		System.out.printf("%d %d\n",li,lj);
 		sudoku.unit[li][lj].setNum(ans[li+1][lj+1]);
 		if(automark) automarkSet(li,lj,ans[li+1][lj+1]);
