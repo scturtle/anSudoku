@@ -179,9 +179,10 @@ public class PlayActivity extends Activity {
 					}
 					 break;
 				case DialogInterface.BUTTON_NEGATIVE:
-					if(action.equals("automarkOn"))
+					if(action.equals("automarkOn")){
 						tb.setChecked(false);
-					else if(action.equals("automarkOff"))
+						pv.automark=false;
+					}else if(action.equals("automarkOff"))
 						tb.setChecked(true);
 					 break;
 				};
