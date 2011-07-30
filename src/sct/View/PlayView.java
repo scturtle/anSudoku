@@ -1,6 +1,5 @@
 package sct.View;
 
-import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Random;
 
@@ -17,8 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class PlayView extends View implements OnTouchListener,Serializable {
-	private static final long serialVersionUID = 3055679388697928669L;
+public class PlayView extends View implements OnTouchListener{
 	float xo=15; //xoffset
 	float  yo=15; //yoffset
 	float  w=450; //width
@@ -33,7 +31,7 @@ public class PlayView extends View implements OnTouchListener,Serializable {
 	int shadowNum;
 	boolean padOnShow=false,padOnMark=false,shadowOnShow=false,automark=false;
 	Context context;
-
+	
 	Sudoku sudoku;//num, mark, background color
 
 	public PlayView(Context context) { super(context);this.context=context; init(); }
@@ -49,7 +47,7 @@ public class PlayView extends View implements OnTouchListener,Serializable {
 		paint.setStyle(Style.FILL);
 		paint.setAntiAlias(true);
 	}
-
+	
 	/*
 	 * function: generate the first sudoku
 	 * input: number of holes
@@ -391,7 +389,7 @@ public class PlayView extends View implements OnTouchListener,Serializable {
 		
 		int luck=r.nextInt(top);
 		int li=luck/10,lj=luck%10;
-		System.out.printf("%d %d\n",li,lj);
+//		System.out.printf("%d %d\n",li,lj);
 		sudoku.unit[li][lj].setNum(ans[li+1][lj+1]);
 		if(automark) automarkSet(li,lj,ans[li+1][lj+1]);
 		sudoku.unit[li][lj].setFixType();

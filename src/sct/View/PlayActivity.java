@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DecimalFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import sct.Lib.Sudoku;
 import sct.Lib.Unit;
@@ -13,9 +16,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class PlayActivity extends Activity {
@@ -23,6 +29,24 @@ public class PlayActivity extends Activity {
 	String noh; // number of holes from FrontActivity
 	PlayView pv;
 	ToggleButton tb;
+	TextView tvtime;
+
+	Timer timer=new Timer();
+	int time=0;
+	DecimalFormat f=new DecimalFormat("00");
+	//handle the msg to update time
+	Handler timerHandler = new Handler(){     
+		public void handleMessage(Message msg) {     
+			switch (msg.what) {         
+			case 29008:
+				int h=time/60/60,m=time/60%60,sec=time%60;
+				tvtime.setText(f.format(h)+":"+f.format(m)+":"+f.format(sec));
+				++time;
+				break;
+			}         
+			super.handleMessage(msg);     
+		}     
+	};     
 
 	private ProgressDialog progressDialog;
 	@Override
@@ -30,6 +54,16 @@ public class PlayActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.play);
 
+		//set timer to send msg to update time
+		tvtime=(TextView)findViewById(R.id.textViewTime);
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				Message msg=new Message();
+				msg.what=29008;
+				timerHandler.sendMessage(msg);
+				}
+		} , 0, 1000);
 		// automark button
 		tb=(ToggleButton)findViewById(R.id.automarkButton);
 		tb.setOnClickListener(new OnClickListener(){
@@ -82,9 +116,9 @@ public class PlayActivity extends Activity {
 				ObjectInputStream ios = new ObjectInputStream(fi);
 				pv.sudoku=(Sudoku)ios.readObject();
 				pv.ans=(int[][])ios.readObject();
-				pv.automark=((String)ios.readObject()).equals("y");
+				pv.automark=((String)ios.readObject()).equals("true");
+				time=Integer.parseInt((String)ios.readObject());
 				tb.setChecked(pv.automark);
-//				System.out.println((String)(ios.readObject()));
 				ios.close();
 			} catch (Exception e) { System.out.println(e.toString()); }
 		}else{ // new game
@@ -112,7 +146,8 @@ public class PlayActivity extends Activity {
 				pv.sudoku.unit[i][j].setbg(Unit.Bg.white);
 			oos.writeObject(pv.sudoku);
 			oos.writeObject(pv.ans);
-			oos.writeObject(pv.automark?"y":"n");
+			oos.writeObject(""+pv.automark);
+			oos.writeObject(""+time);
 			oos.flush();oos.close();
 		} catch (Exception e) { System.out.println(e.toString()); }
 	}

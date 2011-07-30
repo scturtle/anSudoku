@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">anSudoku</string>
-    <string name="Hello">Welcome to anSudoku by scturtle!</string>
+    <string name="Hello">Welcome to anSudoku!\n\nA sudoku game in respect to \n my favourite sudoku game\n\&quot;Sudoku 401\&quot; on iOS.</string>
     <string name="_continue">Continue</string>
     <string name="newgame">New Game</string>
     <string name="back">Back</string>
@@ -10,4 +10,5 @@
     <string name="hint">Hint</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="author">scturtle@gmail.com\n2011</string>
 </resources>
