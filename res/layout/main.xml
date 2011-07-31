@@ -4,7 +4,8 @@
     android:layout_width="fill_parent"
     android:background="@drawable/bg" android:layout_height="fill_parent">
     <ImageView android:id="@+id/imageView1" android:src="@drawable/icon" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="30dip"></ImageView>
-    <TextView android:id="@+id/welView1" android:layout_gravity="center" android:gravity="center" android:text="@string/Hello" android:layout_height="wrap_content" android:layout_marginTop="30dp" android:layout_marginBottom="30dp" android:layout_width="match_parent"></TextView>
+    <TextView android:id="@+id/welView1" android:layout_gravity="center" android:text="@string/Hello" android:layout_height="wrap_content" android:layout_marginTop="30dp" android:layout_marginBottom="30dp" android:textColor="#ffffff" android:textSize="30dp" android:layout_width="wrap_content"></TextView>
+    <TextView android:layout_gravity="center" android:layout_height="wrap_content" android:text="@string/description" android:id="@+id/textView1" android:layout_marginBottom="10dp" android:textColor="#eeeeee" android:layout_width="wrap_content"></TextView>
     <Button android:layout_gravity="center" android:layout_height="wrap_content" android:layout_width="200dip" android:id="@+id/newButton" android:text="@string/newgame"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/_continue" android:layout_width="200dip" android:id="@+id/ContinueButton" android:layout_gravity="center"></Button>
     <TextView android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/textViewAuhor" android:gravity="center" android:layout_marginTop="100dp" android:text="@string/author"></TextView>

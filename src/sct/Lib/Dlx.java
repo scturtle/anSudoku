@@ -1,5 +1,8 @@
 package sct.Lib;
 
+/*
+ * Dancing links alogrithm
+ */
 public class Dlx{
 	static int MAXR=9*9*9+10;
 	static int MAXC=9*9*4+10;
@@ -96,6 +99,7 @@ public class Dlx{
 		L[R[c]] = c; R[L[c]] = c;
 	}
 
+	//ref to getAnswer()
 	static boolean dance(){
 		if (R[0] == 0) {
 //			printSolution(getSolution());
@@ -119,6 +123,7 @@ public class Dlx{
 		resume(c); return false;
 	}
 
+	//ref to getCount()
 	static void danceCheck() {
 		if (R[0] == 0) {
 			count++; return;
@@ -142,6 +147,7 @@ public class Dlx{
 		resume(c);
 	}
 
+	// change the input sudoku to the answer
 	static int[][] getSolution(int m[][]){
 		for(int h=0;h<seln;h++)
 		{
@@ -163,6 +169,12 @@ public class Dlx{
 		}
 	}
 
+	/*
+	 * function: solve a sudoku with holes
+	 * input: sudoku with holes
+	 * output: boolean the if the sudoku is solvable
+	 * side effect: run getSolution () and m will be the answer
+	 */
 	public static boolean getAnswer(int[][] m){
 		init(m);
 		boolean ans=dance();
@@ -171,11 +183,18 @@ public class Dlx{
 		return ans;
 	}
 
+	/*
+	 * function: check if the sudoku is of unique answer
+	 * input: sudoku with holes
+	 * output: 0 or 1 or 2(means 2+)
+	 * side effect: then getSolution () is callable()
+	 */
 	public static int getCount(int[][] m){
 		init(m);
 		danceCheck();
 		return count;
 	}
+	
 	public static void main(String args[]){
 		String s="..1..4.......6.3.5...9.....8.....7.3.......285...7.6..3...8...6..92......4...1...";
 		int m[][]=new int[10][10];

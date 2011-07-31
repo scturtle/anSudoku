@@ -24,6 +24,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+/*
+ * the activity to show view to play
+ */
 public class PlayActivity extends Activity {
 
 	String noh; // number of holes from FrontActivity
@@ -43,10 +46,10 @@ public class PlayActivity extends Activity {
 				tvtime.setText(f.format(h)+":"+f.format(m)+":"+f.format(sec));
 				++time;
 				break;
-			}         
-			super.handleMessage(msg);     
-		}     
-	};     
+			}
+			super.handleMessage(msg);
+		}
+	};
 
 	private ProgressDialog progressDialog;
 	@Override
@@ -109,7 +112,7 @@ public class PlayActivity extends Activity {
 		Bundle bundle = getIntent().getExtras();    
 		noh=bundle.getString("NOH");
 
-		if(noh.equals("-1")){ // means continue
+		if(noh.equals("-1")){ // means continue from last game
 			//resume sudoku data
 			try {
 				FileInputStream fi = openFileInput("sudoku.data");
@@ -127,6 +130,7 @@ public class PlayActivity extends Activity {
 			new Thread() {
 				@Override
 				public void run() {
+					// give the view the number of holes
 					pv.generateSudoku(Integer.parseInt(noh));
 					progressDialog.dismiss();
 				}
@@ -157,6 +161,7 @@ public class PlayActivity extends Activity {
 		AlertDialog.Builder aAlert = new AlertDialog.Builder(this);
 		aAlert.setMessage(message);
 
+		// handle all the answers
 		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface dialog, int which) {
 				switch(which){

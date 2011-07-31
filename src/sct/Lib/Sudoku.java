@@ -1,6 +1,9 @@
 package sct.Lib;
 import java.io.Serializable;
 
+/*
+ * a collection of 81 unit for storing info of them to show in view
+ */
 public class Sudoku implements Serializable{
 	private static final long serialVersionUID = -4893465166415304143L;
 	public Unit unit[][]=new Unit[9][9];

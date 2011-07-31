@@ -16,6 +16,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+/*
+ * the main view to paint sudoku ,pad and handle the onTouch
+ */
 public class PlayView extends View implements OnTouchListener{
 	float xo=15; //xoffset
 	float  yo=15; //yoffset
@@ -28,16 +31,16 @@ public class PlayView extends View implements OnTouchListener{
 
 	float wp=w/9*4;//width of input pad
 	int oi,oj,pi,pj;//o:pad for (i,j) p:left and top location of pad
-	int shadowNum;
+	int shadowNum;// (1~9)
 	boolean padOnShow=false,padOnMark=false,shadowOnShow=false,automark=false;
-	Context context;
 	
 	Sudoku sudoku;//num, mark, background color
 
-	public PlayView(Context context) { super(context);this.context=context; init(); }
+	public PlayView(Context context)
+	{ super(context); init(); }
 
 	public PlayView(Context context,AttributeSet attr) 
-	{ super(context,attr);this.context=context; init(); }     
+	{ super(context,attr); init(); }     
 
 	private void init(){
 		setFocusable(true);
@@ -45,7 +48,7 @@ public class PlayView extends View implements OnTouchListener{
 		this.setOnTouchListener(this);
 		sudoku=new Sudoku();
 		paint.setStyle(Style.FILL);
-		paint.setAntiAlias(true);
+		paint.setAntiAlias(true);// useful
 	}
 	
 	/*
@@ -72,6 +75,9 @@ public class PlayView extends View implements OnTouchListener{
 			}
 	}
 
+	/*
+	 * fuction: draw all world, sequence is important
+	 */
 	@Override
 	public void onDraw(Canvas canvas) {
 		super.onDraw(canvas);     
@@ -416,13 +422,14 @@ public class PlayView extends View implements OnTouchListener{
 			if(inputNum<=9){ // touch guess pad todo:mark
 				if(!padOnMark){// mark a guess
 					int originNum=sudoku.unit[oi][oj].getNum();
-					if(originNum==inputNum){//cancel guess
+					if(sudoku.unit[oi][oj].isGuessType() && originNum!=0 ){//cancel guess
 						sudoku.unit[oi][oj].setNum(0);
 						if(automark){
 							sudoku.unit[oi][oj].setMarkType();
 							automarkClear(oi,oj,originNum);
 						}
-					}else{//really make a guess
+					}
+					if(inputNum!=originNum){//really make a guess
 						sudoku.unit[oi][oj].setGuessType();
 						sudoku.unit[oi][oj].setNum(inputNum);
 						if(automark) automarkSet(oi,oj,inputNum);

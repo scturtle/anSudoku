@@ -2,6 +2,9 @@ package sct.Lib;
 
 import java.io.Serializable;
 
+/*
+ * store the info of per unit (81 in total)
+ */
 public class Unit implements Serializable{
 	private static final long serialVersionUID = -3770040309571770996L;
 
@@ -26,8 +29,6 @@ public class Unit implements Serializable{
 	public void setGuessType(){type=Type.guess;}
 	public void setMarkType(){type=Type.mark;}
 
-	public Type gettype() { return type; }
-	public void settype(Type type) { this.type = type; }
 	public Bg getbg() { return bg; }
 	public void setbg(Bg bg) { this.bg = bg; }
 	
@@ -41,7 +42,7 @@ public class Unit implements Serializable{
 		mark=0;
 	}
 
-	public boolean isOnNum(){
+	public boolean isOnNum(){ // there is a number on it, useful
 		return type==Type.fix || (type==Type.guess && num!=0);
 	}
 	public boolean isMark(int n) {

@@ -51,6 +51,7 @@ public final class R {
         public static final int automark=0x7f040005;
         public static final int back=0x7f040004;
         public static final int cancel=0x7f040009;
+        public static final int description=0x7f04000b;
         public static final int hint=0x7f040007;
         public static final int newgame=0x7f040003;
         public static final int ok=0x7f040008;

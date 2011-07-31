@@ -9,10 +9,15 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+/*
+ * a homemade dialog to let player to select the number of holes of sudoku
+ */
 public class HolesDialog extends Dialog {  
 	TextView text;
-	public int holes=15+38;
+	static int LOW=38;// the lowest number of holes
+	public int holes;
 	public boolean ok;
+	SeekBar sb;
 
 	public HolesDialog(Context context) {
 		super(context);  
@@ -41,10 +46,12 @@ public class HolesDialog extends Dialog {
 				}  
 			});  
 		
-		((SeekBar)findViewById(R.id.seekBar1)).setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+		sb=(SeekBar)findViewById(R.id.seekBar1);
+		holes=sb.getProgress()+LOW;
+		sb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 
 			public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
-				holes=progress+38;
+				holes=progress+LOW;
 				text.setText(""+holes);
 			}
 

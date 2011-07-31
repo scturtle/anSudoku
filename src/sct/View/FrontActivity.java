@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+/*
+ * the first activity
+ */
 public class FrontActivity extends Activity {
 
 	HolesDialog hd;
