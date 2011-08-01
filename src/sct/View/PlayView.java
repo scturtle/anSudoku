@@ -383,7 +383,7 @@ public class PlayView extends View implements OnTouchListener{
 		int[] arr=new int[81];
 		int top=0;
 		for(int i=0;i<9;i++) for(int j=0;j<9;j++)
-			if(sudoku.unit[i][j].isMarkType())
+			if(!sudoku.unit[i][j].isOnNum())
 				arr[top++]=i*10+j;
 		if(top==0) return;
 		
