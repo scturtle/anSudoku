@@ -9,7 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import sct.Lib.Sudoku;
-import sct.Lib.Unit;
+import sct.Lib.Cell;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -147,7 +147,7 @@ public class PlayActivity extends Activity {
 			FileOutputStream fo = openFileOutput("sudoku.data", 0);
 			ObjectOutputStream oos = new ObjectOutputStream(fo);
 			for(int i=0;i<9;i++) for(int j=0;j<9;j++)
-				pv.sudoku.unit[i][j].setbg(Unit.Bg.white);
+				pv.sudoku.cell[i][j].setbg(Cell.Bg.white);
 			oos.writeObject(pv.sudoku);
 			oos.writeObject(pv.ans);
 			oos.writeObject(""+pv.automark);

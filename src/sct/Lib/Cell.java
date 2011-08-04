@@ -3,9 +3,9 @@ package sct.Lib;
 import java.io.Serializable;
 
 /*
- * store the info of per unit (81 in total)
+ * store the info of per cell (81 in total)
  */
-public class Unit implements Serializable{
+public class Cell implements Serializable{
 	private static final long serialVersionUID = -3770040309571770996L;
 
 	public enum Type { fix,guess,mark };
@@ -15,7 +15,7 @@ public class Unit implements Serializable{
 	int num;
 	int mark;
 	
-	public Unit(){
+	public Cell(){
 		type=Type.guess;
 		bg=Bg.white; 
 		num=0;
