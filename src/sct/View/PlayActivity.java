@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import sct.Lib.Automark;
 import sct.Lib.Sudoku;
 import sct.Lib.Cell;
 import android.app.Activity;
@@ -169,16 +170,16 @@ public class PlayActivity extends Activity {
 					if(action.equals("automarkOn")){
 						tb.setChecked(true);
 						pv.automark=true;
-						pv.automarkAll();
+						Automark.automarkAll(pv.sudoku);
 						pv.postInvalidate();
 					}else if(action.equals("automarkOff")){
 						tb.setChecked(false);
 						pv.automark=false;
 					}else if(action.equals("automarkReset")){
-						pv.automarkAll();
+						Automark.automarkAll(pv.sudoku);
 						pv.postInvalidate();
 					}else if(action.equals("clear")){
-						pv.clearAllMark();
+						Automark.clearAllMark(pv.sudoku);
 					}else if(action.equals("hint")){
 						pv.giveHint();
 					}
