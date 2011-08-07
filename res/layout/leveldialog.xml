@@ -1,0 +1,13 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_height="fill_parent" android:orientation="vertical" android:layout_width="match_parent">
+        <RadioGroup android:id="@+id/radioGroup1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center_horizontal">
+            <RadioButton android:layout_height="wrap_content" android:layout_width="wrap_content" android:checked="true" android:text="@string/easy" android:id="@+id/easyButton"></RadioButton>
+            <RadioButton android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/moderateButton" android:text="@string/moderate"></RadioButton>
+            <RadioButton android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/challengingButton" android:text="@string/challenging" android:checked="true"></RadioButton>
+            <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/difficultButton" android:text="@string/difficult"></RadioButton>
+        </RadioGroup>
+        <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:gravity="center" android:layout_width="wrap_content" android:layout_gravity="center_horizontal">
+            <Button android:layout_height="wrap_content" android:id="@+id/OkButton" android:text="@string/ok" android:layout_width="70dip" android:layout_marginRight="10dip"></Button>
+            <Button android:layout_height="wrap_content" android:id="@+id/CancelButton" android:text="@string/cancel" android:layout_width="70dip" android:layout_marginLeft="10dip"></Button>
+        </LinearLayout>
+    </LinearLayout>

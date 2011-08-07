@@ -1,11 +1,11 @@
 package sct.View;
 
-import java.lang.reflect.Array;
 import java.util.Random;
 
 import sct.Lib.Automark;
 import sct.Lib.Cell;
-import sct.Lib.DigHoles;
+import sct.Lib.LevelGenerator;
+import sct.Lib.Solver;
 import sct.Lib.Sudoku;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -35,7 +35,7 @@ public class PlayView extends View implements OnTouchListener{
 	int shadowNum;// (1~9)
 	boolean padOnShow=false,padOnMark=false,shadowOnShow=false,automark=false;
 	
-	Sudoku sudoku;//num, mark, background color
+	Sudoku s;//num, mark, background color
 
 	public PlayView(Context context)
 	{ super(context); init(); }
@@ -47,7 +47,7 @@ public class PlayView extends View implements OnTouchListener{
 		setFocusable(true);
 		setFocusableInTouchMode(true);
 		this.setOnTouchListener(this);
-		sudoku=new Sudoku();
+		s=new Sudoku();
 		paint.setStyle(Style.FILL);
 		paint.setAntiAlias(true);// useful
 	}
@@ -56,23 +56,18 @@ public class PlayView extends View implements OnTouchListener{
 	 * function: generate the first sudoku
 	 * input: number of holes
 	 */
-	public void generateSudoku(int holes){
-		//		long start=System.currentTimeMillis(); 
-		int [][]m = null;
-		Object arr = DigHoles.tryDigLoop(holes);
-		ans=(int[][])Array.get(arr, 0);//answer
-		m=(int[][])Array.get(arr, 1);// sudoku with holes
-		//		int times=(Integer) Array.get(arr, 2);
-		//		long end=System.currentTimeMillis(); 
-		//		System.out.printf("Try:%dtimes using:%dms\n",times,end-start);
-
+	public void generateSudoku(int level){
+		long start=System.currentTimeMillis(); 
+		LevelGenerator.getSudokuAtLevel(level);
+		System.out.printf("time used: %d ms\n",System.currentTimeMillis()-start);
+		int[][] m=LevelGenerator.getSudoku();
+		System.out.printf("level: %d \n",Solver.getLevel(m));
+		ans=LevelGenerator.getAns();
+		
 		//m[][] to sudoku.cell[][]
-		for(int i=1;i<=9;i++)
-			for(int j=1;j<=9;j++)
-			{
-				if(m[i][j]!=0)
-					sudoku.cell[i-1][j-1].setFixType();
-				sudoku.cell[i-1][j-1].setNum(m[i][j]);
+		for(int i=0;i<9;i++) for(int j=0;j<9;j++){
+				if(m[i][j]!=0) s.cell[i][j].setFixType();
+				s.cell[i][j].setNum(m[i][j]);
 			}
 	}
 
@@ -95,7 +90,7 @@ public class PlayView extends View implements OnTouchListener{
 	void drawSudoku(Canvas canvas){
 		for(int i=0;i<9;i++)
 			for(int j=0;j<9;j++) {
-				Cell u = sudoku.cell[i][j];
+				Cell u = s.cell[i][j];
 
 				// set cell bg color
 				if(u.getbg()==Cell.Bg.white)
@@ -127,14 +122,14 @@ public class PlayView extends View implements OnTouchListener{
 					else
 					{
 						if(u.getNum()==0) continue;
-						if(sudoku.cell[i][j].getNum()==ans[i+1][j+1])
+						if(s.cell[i][j].getNum()==ans[i][j])
 							paint.setColor(Color.BLUE);
 						else
 							paint.setColor(Color.RED);// wrong guess
 					}
 
 					paint.setTextSize(32);
-					canvas.drawText(""+sudoku.cell[i][j].getNum()
+					canvas.drawText(""+s.cell[i][j].getNum()
 							, 15 + w/9*i + xo,35 + w/9*j +yo, paint);
 				}
 			}
@@ -186,7 +181,7 @@ public class PlayView extends View implements OnTouchListener{
 		if(!padOnMark){// pad of guess
 			paint.setTextSize(48);
 			for(int i=0;i<3;i++) for(int j=0;j<3;j++) {
-				int num=i*3+j+1,originNum=sudoku.cell[oi][oj].getNum();
+				int num=i*3+j+1,originNum=s.cell[oi][oj].getNum();
 				// show guess num in blue in pad
 				if(num==originNum) paint.setColor(Color.BLUE);
 				canvas.drawText(""+num, 20+wp/3*j+xop, 50+wp/3*i+yop, paint);
@@ -197,11 +192,11 @@ public class PlayView extends View implements OnTouchListener{
 			paint.setTextSize(24);
 			for(int i=0;i<3;i++) for(int j=0;j<3;j++) {
 				int num=i*3+j+1;
-				if(sudoku.cell[oi][oj].isMark(num)) paint.setColor(Color.BLUE);
+				if(s.cell[oi][oj].isMark(num)) paint.setColor(Color.BLUE);
 				canvas.drawText(""+num,
 						6+wp/3*j+wp/9*j +xop, 19+wp/3*i+wp/9*i +yop,
 						paint);
-				if(sudoku.cell[oi][oj].isMark(num)) paint.setColor(Color.BLACK);
+				if(s.cell[oi][oj].isMark(num)) paint.setColor(Color.BLACK);
 			}
 		}
 
@@ -262,10 +257,10 @@ public class PlayView extends View implements OnTouchListener{
 			for(int j=0;j<9;j++)
 				if(show&&(((i/3*3==oi/3*3)&&(j/3*3==oj/3*3))||//same house
 						i==oi||j==oj)){
-					sudoku.cell[i][j].setbg(Cell.Bg.blue);
+					s.cell[i][j].setbg(Cell.Bg.blue);
 				} else
-					sudoku.cell[i][j].setbg(Cell.Bg.white);
-		sudoku.cell[oi][oj].setbg(Cell.Bg.white);
+					s.cell[i][j].setbg(Cell.Bg.white);
+		s.cell[oi][oj].setbg(Cell.Bg.white);
 		padOnShow=show;
 		if(show) shadowOnShow=false;
 	}
@@ -275,23 +270,23 @@ public class PlayView extends View implements OnTouchListener{
 	 * input: the i,j of the fix cell
 	 */
 	void toggleShowShadow(int ti,int tj){
-		if(shadowOnShow && shadowNum==sudoku.cell[ti][tj].getNum()){
+		if(shadowOnShow && shadowNum==s.cell[ti][tj].getNum()){
 			for(int i=0;i<9;i++)
 				for(int j=0;j<9;j++)
-					sudoku.cell[i][j].setbg(Cell.Bg.white);
+					s.cell[i][j].setbg(Cell.Bg.white);
 			shadowOnShow=false;
 			return;
 		}
 
-		shadowNum=sudoku.cell[ti][tj].getNum();
+		shadowNum=s.cell[ti][tj].getNum();
 		shadowOnShow=true;
 
 		//find
 		int[] a=new int[81];int top=0;
 		for(int i=0;i<9;i++)
 			for(int j=0;j<9;j++)
-				if(sudoku.cell[i][j].isOnNum()){
-					if(sudoku.cell[i][j].getNum()==shadowNum)
+				if(s.cell[i][j].isOnNum()){
+					if(s.cell[i][j].getNum()==shadowNum)
 						a[top++]=i*10+j;
 				}
 
@@ -300,15 +295,15 @@ public class PlayView extends View implements OnTouchListener{
 			int di=a[k]/10,dj=a[k]%10;
 			for(int i=0;i<9;i++)
 				for(int j=0;j<9;j++)
-					if(sudoku.cell[i][j].isOnNum()|| // on num
-					(sudoku.cell[i][j].isMarkType() && !sudoku.cell[i][j].isMark(shadowNum))|| //unmarked this num
+					if(s.cell[i][j].isOnNum()|| // on num
+					(s.cell[i][j].isMarkType() && !s.cell[i][j].isMark(shadowNum))|| //unmarked this num
 					((i/3*3==di/3*3)&&(j/3*3==dj/3*3))|| //same house
 					i==di||j==dj) //same row or column
-						sudoku.cell[i][j].setbg(Cell.Bg.gray);
+						s.cell[i][j].setbg(Cell.Bg.gray);
 		}
 		for(int k=0;k<top;k++){
 			int di=a[k]/10,dj=a[k]%10;
-			sudoku.cell[di][dj].setbg(Cell.Bg.blue);
+			s.cell[di][dj].setbg(Cell.Bg.blue);
 		}
 	}
 	/*
@@ -320,7 +315,7 @@ public class PlayView extends View implements OnTouchListener{
 		int[] arr=new int[81];
 		int top=0;
 		for(int i=0;i<9;i++) for(int j=0;j<9;j++)
-			if(!sudoku.cell[i][j].isOnNum())
+			if(!s.cell[i][j].isOnNum())
 				arr[top++]=i*10+j;
 		if(top==0) return;
 		
@@ -328,15 +323,15 @@ public class PlayView extends View implements OnTouchListener{
 		setShowPad(false);
 		shadowOnShow=false;
 		for(int i=0;i<9;i++) for(int j=0;j<9;j++)
-			sudoku.cell[i][j].setbg(Cell.Bg.white);
+			s.cell[i][j].setbg(Cell.Bg.white);
 		
 		int luck=r.nextInt(top);
 		int li=arr[luck]/10,lj=arr[luck]%10;
 //		System.out.printf("%d %d\n",li,lj);
-		sudoku.cell[li][lj].setNum(ans[li+1][lj+1]);
-		if(automark) Automark.automarkSet(sudoku,li,lj,ans[li+1][lj+1]);
-		sudoku.cell[li][lj].setFixType();
-		sudoku.cell[li][lj].setbg(Cell.Bg.blue);
+		s.cell[li][lj].setNum(ans[li][lj]);
+		if(automark) Automark.automarkSet(s,li,lj,ans[li][lj]);
+		s.cell[li][lj].setFixType();
+		s.cell[li][lj].setbg(Cell.Bg.blue);
 		invalidate();
 	}
 	/*
@@ -358,27 +353,27 @@ public class PlayView extends View implements OnTouchListener{
 
 			if(inputNum<=9){ // touch guess pad todo:mark
 				if(!padOnMark){// mark a guess
-					int originNum=sudoku.cell[oi][oj].getNum();
-					if(sudoku.cell[oi][oj].isGuessType() && originNum!=0 ){//cancel guess
-						sudoku.cell[oi][oj].setNum(0);
+					int originNum=s.cell[oi][oj].getNum();
+					if(s.cell[oi][oj].isGuessType() && originNum!=0 ){//cancel guess
+						s.cell[oi][oj].setNum(0);
 						if(automark){
-							sudoku.cell[oi][oj].setMarkType();
-							Automark.automarkCell(sudoku,oi,oj);
-							Automark.automarkClear(sudoku,oi,oj,originNum);
+							s.cell[oi][oj].setMarkType();
+							Automark.automarkCell(s,oi,oj);
+							Automark.automarkClear(s,oi,oj,originNum);
 						}
 					}
 					if(inputNum!=originNum){//really make a guess
-						sudoku.cell[oi][oj].setGuessType();
-						sudoku.cell[oi][oj].setNum(inputNum);
-						if(automark) Automark.automarkSet(sudoku,oi,oj,inputNum);
+						s.cell[oi][oj].setGuessType();
+						s.cell[oi][oj].setNum(inputNum);
+						if(automark) Automark.automarkSet(s,oi,oj,inputNum);
 						setShowPad(false);
 					}
 				}else{ // make a mark
-					sudoku.cell[oi][oj].setMarkType();
-					if(sudoku.cell[oi][oj].isMark(inputNum))
-						sudoku.cell[oi][oj].clearMark(inputNum);
+					s.cell[oi][oj].setMarkType();
+					if(s.cell[oi][oj].isMark(inputNum))
+						s.cell[oi][oj].clearMark(inputNum);
 					else
-						sudoku.cell[oi][oj].setMark(inputNum);
+						s.cell[oi][oj].setMark(inputNum);
 				}
 			}
 			else if(inputNum==10){ // touch mark btn
@@ -386,7 +381,7 @@ public class PlayView extends View implements OnTouchListener{
 			}
 			else setShowPad(false);
 		} else if(0<=i && i<9 && 0<=j && j<9){ // touch on cell
-			if(sudoku.cell[i][j].isFixType()){
+			if(s.cell[i][j].isFixType()){
 				setShowPad(false);
 				toggleShowShadow(i,j);
 			}else{ //guess

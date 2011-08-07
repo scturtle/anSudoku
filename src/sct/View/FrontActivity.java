@@ -15,21 +15,21 @@ import android.widget.Button;
  */
 public class FrontActivity extends Activity {
 
-	HolesDialog hd;
+	LevelDialog ld;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		((Button)findViewById(R.id.newButton)).setOnClickListener(new OnClickListener(){
+		((Button)findViewById(R.id.newgameButton)).setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
-				hd.show();
+				ld.show();
 			}
 		});
 
-		((Button)findViewById(R.id.ContinueButton)).setOnClickListener(new OnClickListener(){
+		((Button)findViewById(R.id.ContinuegameButton)).setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
 				// if firstrun then not continue
@@ -39,17 +39,17 @@ public class FrontActivity extends Activity {
 			    
 				Intent intent = new Intent(FrontActivity.this, PlayActivity.class);
 				Bundle holesBundle = new Bundle();
-				holesBundle.putString("NOH","-1"); // means continue
+				holesBundle.putString("LEVEL","-1"); // means continue
 				intent.putExtras(holesBundle);
 				startActivityForResult(intent, 0);
 			}
 		});
 		
-		hd=new HolesDialog(this);
-		hd.setOnDismissListener(new DialogInterface.OnDismissListener(){
+		ld=new LevelDialog(this);
+		ld.setOnDismissListener(new DialogInterface.OnDismissListener(){
 
 			public void onDismiss(DialogInterface arg0) {
-				if(hd.ok) {
+				if(ld.ok) {
 					SharedPreferences prefs = getSharedPreferences("anSudoku", MODE_PRIVATE); 
 				    Editor editor = prefs.edit(); 
 				    editor.putString("firstRun","no"); 
@@ -57,7 +57,7 @@ public class FrontActivity extends Activity {
 					
 					Intent intent = new Intent(FrontActivity.this, PlayActivity.class);
 					Bundle holesBundle = new Bundle();
-					holesBundle.putString("NOH",""+hd.holes);
+					holesBundle.putString("LEVEL",""+ld.level);
 					intent.putExtras(holesBundle);
 					startActivityForResult(intent, 0);
 				}

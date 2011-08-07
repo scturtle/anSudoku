@@ -46,6 +46,7 @@ public class Cell implements Serializable{
 		return type==Type.fix || (type==Type.guess && num!=0);
 	}
 	public boolean isMark(int n) {
+		if(type!=Type.mark) return false;// check type first
 		if(n>=1 && n<=9)
 			return ( mark & (1<<n) ) > 0;
 		else 

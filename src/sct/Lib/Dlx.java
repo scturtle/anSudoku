@@ -20,8 +20,13 @@ public class Dlx{
 		S[c]++; Col[p]=c;
 	}
 
-	static void init(int[][] su)
+	static void init(int[][] m)
 	{
+		//0~8 => 1~9
+		int[][] su=new int[10][10];
+		for(int i=0;i<9;i++) for(int j=0;j<9;j++)
+			su[i+1][j+1]=m[i][j];
+		
 		int i,j,k;
 		for (i=1;i<=9*9*4;i++)
 		{
@@ -155,15 +160,15 @@ public class Dlx{
 			int k=t%10; t/=10;
 			int j=t%10; t/=10;
 			int i=t%10;
-			m[i][j]=k;
+			m[i-1][j-1]=k;
 		}
 		return m;
 	}
 
 	static void printSolution(int[][] m){
-		for(int i=1;i<=9;i++)
+		for(int i=0;i<9;i++)
 		{
-			for(int j=1;j<=9;j++)
+			for(int j=0;j<9;j++)
 				System.out.print(m[i][j]+" ");
 			System.out.println();
 		}
@@ -197,18 +202,21 @@ public class Dlx{
 	
 	public static void main(String args[]){
 		String s="..1..4.......6.3.5...9.....8.....7.3.......285...7.6..3...8...6..92......4...1...";
-		int m[][]=new int[10][10];
+		int m[][]=new int[9][9];
 		for(int i=0;i<9;i++) 
 			for(int j=0;j<9;j++)
 				if(s.charAt(i*9+j)=='.')
-					m[i+1][j+1]=0;
+					m[i][j]=0;
 				else
-					m[i+1][j+1]=s.charAt(i*9+j)-'0';
+					m[i][j]=s.charAt(i*9+j)-'0';
 
 		long start=System.currentTimeMillis(); 
 		init(m);
 		dance();
 		long end=System.currentTimeMillis(); 
 		System.out.printf("count:%d %d ms\n",count,end-start);
+		int[][] ans=new int[9][9];
+		getSolution(ans);
+		printSolution(ans);
 	}
 }

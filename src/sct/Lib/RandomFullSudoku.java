@@ -8,9 +8,9 @@ public class RandomFullSudoku{
 	 */
 	public static int[][] getSudoku(){
 		Random r=new Random();
-		int[][] m=new int[10][10];
+		int[][] m=new int[9][9];
 		int[] n={1,2,3,4,5,6,7,8,9};
-		int[] s={1,4,7};
+		int[] s={0,3,6};
 		// random the diagonal houses first
 		for(int c=0;c<3;c++)
 		{
@@ -30,9 +30,9 @@ public class RandomFullSudoku{
 	
 	//test function
     static void print(int[][] m){
-        for(int i=1;i<=9;i++)
+        for(int i=0;i<9;i++)
         {
-            for(int j=1;j<=9;j++)
+            for(int j=0;j<9;j++)
                 System.out.print(m[i][j]+" ");
             System.out.println();
         }
@@ -40,6 +40,7 @@ public class RandomFullSudoku{
     
 	//test function
 	public static void main(String args[]){
-		getSudoku();
+		int[][] m=getSudoku();
+		print(m);
 	}
 }

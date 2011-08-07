@@ -12,4 +12,8 @@
     <string name="cancel">Cancel</string>
     <string name="author">scturtle@gmail.com\n2011</string>
     <string name="description">A sudoku game in respect to \n\&quot;Sudoku 401\&quot; on iOS.</string>
+    <string name="easy">Easy</string>
+    <string name="moderate">Moderate</string>
+    <string name="challenging">Challenging</string>
+    <string name="difficult">Difficult</string>
 </resources>

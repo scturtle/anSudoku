@@ -30,7 +30,7 @@ import android.widget.ToggleButton;
  */
 public class PlayActivity extends Activity {
 
-	String noh; // number of holes from FrontActivity
+	String level; // level of sudoku
 	PlayView pv;
 	ToggleButton tb;
 	TextView tvtime;
@@ -111,14 +111,14 @@ public class PlayActivity extends Activity {
 		pv=(PlayView)findViewById(R.id.sudokuView1);
 
 		Bundle bundle = getIntent().getExtras();    
-		noh=bundle.getString("NOH");
+		level=bundle.getString("LEVEL");
 
-		if(noh.equals("-1")){ // means continue from last game
+		if(level.equals("-1")){ // means continue from last game
 			//resume sudoku data
 			try {
 				FileInputStream fi = openFileInput("sudoku.data");
 				ObjectInputStream ios = new ObjectInputStream(fi);
-				pv.sudoku=(Sudoku)ios.readObject();
+				pv.s=(Sudoku)ios.readObject();
 				pv.ans=(int[][])ios.readObject();
 				pv.automark=((String)ios.readObject()).equals("true");
 				time=Integer.parseInt((String)ios.readObject());
@@ -131,8 +131,8 @@ public class PlayActivity extends Activity {
 			new Thread() {
 				@Override
 				public void run() {
-					// give the view the number of holes
-					pv.generateSudoku(Integer.parseInt(noh));
+					// give the view the level
+					pv.generateSudoku(Integer.parseInt(level));
 					progressDialog.dismiss();
 				}
 			}.start();
@@ -148,8 +148,8 @@ public class PlayActivity extends Activity {
 			FileOutputStream fo = openFileOutput("sudoku.data", 0);
 			ObjectOutputStream oos = new ObjectOutputStream(fo);
 			for(int i=0;i<9;i++) for(int j=0;j<9;j++)
-				pv.sudoku.cell[i][j].setbg(Cell.Bg.white);
-			oos.writeObject(pv.sudoku);
+				pv.s.cell[i][j].setbg(Cell.Bg.white);
+			oos.writeObject(pv.s);
 			oos.writeObject(pv.ans);
 			oos.writeObject(""+pv.automark);
 			oos.writeObject(""+time);
@@ -170,16 +170,16 @@ public class PlayActivity extends Activity {
 					if(action.equals("automarkOn")){
 						tb.setChecked(true);
 						pv.automark=true;
-						Automark.automarkAll(pv.sudoku);
+						Automark.automarkAll(pv.s);
 						pv.postInvalidate();
 					}else if(action.equals("automarkOff")){
 						tb.setChecked(false);
 						pv.automark=false;
 					}else if(action.equals("automarkReset")){
-						Automark.automarkAll(pv.sudoku);
+						Automark.automarkAll(pv.s);
 						pv.postInvalidate();
 					}else if(action.equals("clear")){
-						Automark.clearAllMark(pv.sudoku);
+						Automark.clearAllMark(pv.s);
 					}else if(action.equals("hint")){
 						pv.giveHint();
 					}
