@@ -10,14 +10,13 @@ public class LevelGenerator {
 
 	public static boolean getSudokuAtLevel(int level){// 1<=level<=4
 		int[] arr=new int[81];
-		do
+		while(true)
 		{
 			m=RandomFullSudoku.getSudoku();
 			ans=m.clone(); for(int i=0;i<m.length;i++) ans[i]=m[i].clone();
 			int c=0;// len of arr
-			for(int i=0;i<9;i++) //get cell list
-				for(int j=0;j<9;j++)
-					arr[c++]=i*10+j;
+			for(int i=0;i<9;i++) for(int j=0;j<9;j++)
+				arr[c++]=i*10+j;
 
 			//shuttle the list
 			Random r=new Random();
@@ -40,7 +39,8 @@ public class LevelGenerator {
 				if(Dlx.getCount(m)!=1)
 					m[i][j]=t;
 			}
-		}while(Solver.isLevel(m,level)==false);
+			if(Solver.getLevel(m)==level) break;
+		}
 		return true;
 	}
 	
@@ -52,14 +52,15 @@ public class LevelGenerator {
                 System.out.print(m[i][j]+" ");
             System.out.println();
         }
+		System.out.println("=================");
     }
 	public static void main(String[] args) {
 		long start=System.currentTimeMillis(); 
 		getSudokuAtLevel(4);
 		long timeused=System.currentTimeMillis()-start; 
 		print(getSudoku());
-		System.out.println("=================");
-		print(getAns());
+//		System.out.println("Count:"+Dlx.getCount(m));
+//		print(getAns());
 		System.out.println("time used: "+timeused);
 	}
 }

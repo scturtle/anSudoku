@@ -126,13 +126,14 @@ public class Solver {
 	}
 
 	public static boolean checkMark(Sudoku s,int[] ans){
-		for(int i=0;i<9;i++) for(int j=0;j<9;j++){
+		for(int i=0;i<9;i++) for(int j=0;j<9;j++) if(s.cell[i][j].isMarkType()){
 			ans[0]=i;ans[1]=j;
-			int c=0;
-			for(int n=1;n<=9 && c<=1;n++)
-				if(s.cell[i][j].isMark(n))
-					{c++;ans[2]=n;}
-			if(c==1) return true;
+			int mark=s.cell[i][j].mark;
+			if(mark!=0 && ((mark&(mark-1))==0)){// only one 1
+				for(int n=1;n<=9;n++)
+					if((mark&(1<<n))!=0)
+					{ans[2]=n;return true;}
+			}
 		}
 		for(int n=1;n<=9;n++){
 			ans[2]=n;
@@ -140,7 +141,6 @@ public class Solver {
 			for(int i=0;i<9;i++){
 				int c=0; ans[0]=i;
 				for(int j=0;j<9;j++)
-					if(s.cell[i][j].isMarkType())
 						if(s.cell[i][j].isMark(n)) {c++;ans[1]=j;}
 				if(c==1) return true;
 			}
@@ -148,7 +148,6 @@ public class Solver {
 			for(int j=0;j<9;j++){
 				int c=0; ans[1]=j;
 				for(int i=0;i<9;i++)
-					if(s.cell[i][j].isMarkType())
 						if(s.cell[i][j].isMark(n)) {c++;ans[0]=i;}
 				if(c==1) return true;
 			}
@@ -156,14 +155,12 @@ public class Solver {
 			for(int bi=0;bi<9;bi+=3) for(int bj=0;bj<9;bj+=3){
 				int c=0;
 				for(int i=bi;i<bi+3;i++) for(int j=bj;j<bj+3;j++)
-					if(s.cell[i][j].isMarkType())
 						if(s.cell[i][j].isMark(n)) {c++;ans[0]=i;ans[1]=j;}
 				if(c==1) return true;
 			}
 		}
 		return false;
 	}
-	
 	
 	static boolean nakedPair(Sudoku s){
 		for(int ai=0;ai<9;ai++) for(int aj=0;aj<9;aj++){
@@ -233,66 +230,54 @@ public class Solver {
 		return false;
 	}
 	
-	
 	static boolean hiddenPair(Sudoku s){
 		for(int a=1;a<=9;a++)
 			for(int b=a+1;b<=9;b++){
 				int[] ma=new int[3];
 				int[] mb=new int[3];
 				//row
+				int T=(1<<a)|(1<<b);
 				for(int i=0;i<9;i++){
 					int ca=0,cb=0;
-					for(int j=0;j<9 && ca<=2 && cb<=2;j++)
-						if(s.cell[i][j].isMarkType()){
+					for(int j=0;j<9 && ca<=2 && cb<=2;j++){
 							if(s.cell[i][j].isMark(a)) ma[ca++]=j;
 							if(s.cell[i][j].isMark(b)) mb[cb++]=j;
-						}
+					}
 					boolean unmarked=false;
 					if(ca==2 && cb==2 && ma[0]==mb[0] && ma[1]==mb[1]){//found
-						for(int n=1;n<=9;n++) if(n!=a && n!=b){//clear
-							if(s.cell[i][ma[0]].isMark(n)) 
-							{s.cell[i][ma[0]].clearMark(n);unmarked=true;}
-							if(s.cell[i][ma[1]].isMark(n)) 
-							{s.cell[i][ma[1]].clearMark(n);unmarked=true;}
-						}
+						for(int t=0;t<2;t++)
+							if(s.cell[i][ma[t]].mark!=T)
+							{s.cell[i][ma[t]].mark=T;unmarked=true;}
 					}
 					if(unmarked) return true;
 				}
 				//column
 				for(int j=0;j<9;j++){
 					int ca=0,cb=0;
-					for(int i=0;i<9 && ca<=2 && cb<=2;i++)
-						if(s.cell[i][j].isMarkType()){
+					for(int i=0;i<9 && ca<=2 && cb<=2;i++){
 							if(s.cell[i][j].isMark(a)) ma[ca++]=i;
 							if(s.cell[i][j].isMark(b)) mb[cb++]=i;
 						}
 					boolean unmarked=false;
 					if(ca==2 && cb==2 && ma[0]==mb[0] && ma[1]==mb[1]){//found
-						for(int n=1;n<=9;n++) if(n!=a && n!=b){//clear
-							if(s.cell[ma[0]][j].isMark(n)) 
-							{s.cell[ma[0]][j].clearMark(n);unmarked=true;}
-							if(s.cell[ma[1]][j].isMark(n)) 
-							{s.cell[ma[1]][j].clearMark(n);unmarked=true;}
-						}
+						for(int t=0;t<2;t++)
+							if(s.cell[ma[t]][j].mark!=T)
+							{s.cell[ma[t]][j].mark=T;unmarked=true;}
 					}
 					if(unmarked) return true;
 				}
 				//block
 				for(int bi=0;bi<9;bi+=3) for(int bj=0;bj<9;bj+=3){
 					int ca=0,cb=0;
-					for(int k=0;k<9 && ca<=2 && cb<=2;k++)
-						if(s.cell[bi+k/3][bj+k%3].isMarkType()){
+					for(int k=0;k<9 && ca<=2 && cb<=2;k++){
 							if(s.cell[bi+k/3][bj+k%3].isMark(a)) ma[ca++]=k;
 							if(s.cell[bi+k/3][bj+k%3].isMark(b)) mb[cb++]=k;
 						}
 					boolean unmarked=false;
 					if(ca==2 && cb==2 && ma[0]==mb[0] && ma[1]==mb[1]){//found
-						for(int n=1;n<=9;n++) if(n!=a && n!=b){//clear
-							if(s.cell[bi+ma[0]/3][bj+ma[0]%3].isMark(n)) 
-							{s.cell[bi+ma[0]/3][bj+ma[0]%3].clearMark(n);unmarked=true;}
-							if(s.cell[bi+ma[1]/3][bj+ma[1]%3].isMark(n)) 
-							{s.cell[bi+ma[1]/3][bj+ma[1]%3].clearMark(n);unmarked=true;}
-						}
+						for(int t=0;t<2;t++)
+							if(s.cell[bi+ma[t]/3][bj+ma[t]%3].mark!=T)
+							{s.cell[bi+ma[t]/3][bj+ma[t]%3].mark=T;unmarked=true;}
 					}
 					if(unmarked) return true;
 				}
@@ -300,7 +285,6 @@ public class Solver {
 			}
 		return false;
 	}
-	
 
     //1.Sometimes a candidate within a box is restricted to one row or column.	
 	//2.Sometimes a candidate within a row or column is restricted to one box. 
@@ -310,7 +294,7 @@ public class Solver {
 			for(int i=0;i<9;i++){
 				boolean[] c=new boolean[3]; c[0]=c[1]=c[2]=false;
 				for(int j=0;j<9;j++)
-					if(s.cell[i][j].isMarkType() && s.cell[i][j].isMark(n)) c[j/3]=true;
+					if(s.cell[i][j].isMark(n)) c[j/3]=true;
 				int bi=i/3*3,bj=-1;
 				if(c[0]&&!c[1]&&!c[2]) bj=0;
 				else if(!c[0]&&c[1]&&!c[2]) bj=3;
@@ -318,7 +302,7 @@ public class Solver {
 				if(bj==-1) continue;//not found
 				boolean unmark=false;
 				for(int ti=0;ti<3;ti++) for(int tj=0;tj<3;tj++) if(bi+ti!=i)//unmark
-					if(s.cell[bi+ti][bj+tj].isMarkType() && s.cell[bi+ti][bj+tj].isMark(n))
+					if(s.cell[bi+ti][bj+tj].isMark(n))
 						{s.cell[bi+ti][bj+tj].clearMark(n);unmark=true;}
 				if(unmark) return true;
 			}
@@ -376,24 +360,17 @@ public class Solver {
 		return false;
 	}
 	
-	
 	static boolean nakedTripleQuad(int noc,Sudoku s){
 		int[] k=new int[4];
 		for(k[0]=1;k[0]<=9;k[0]++) for(k[1]=k[0]+1;k[1]<=9;k[1]++) for(k[2]=k[1]+1;k[2]<=9;k[2]++){
 			int top; if(noc==3) top=k[2]+1; else top=9;//if Triple then do not loop
 			for(k[3]=k[2]+1;k[3]<=top;k[3]++){
 				//row
+				int T=0x3fe;for(int i=0;i<noc;i++) T^=1<<k[i];
 				for(int i=0;i<9;i++){
 					int count=0;int[] m=new int[5];
 					for(int j=0;j<9 && count<=noc;j++) if(s.cell[i][j].isMarkType()){
-						boolean only_k=true;
-						for(int n=1;n<=9 && only_k;n++){
-							boolean n_in_k=false;
-							for(int t=0;t<noc;t++) if(n==k[t]) n_in_k=true;
-							if(!n_in_k && s.cell[i][j].isMark(n))
-								only_k=false;
-						}
-						if(only_k) m[count++]=j; //found
+						if((s.cell[i][j].mark & T) ==0) m[count++]=j;
 					}
 					if(count==noc){//clear
 						boolean unmark=false;
@@ -411,14 +388,7 @@ public class Solver {
 				for(int j=0;j<9;j++){
 					int count=0;int[] m=new int[5];
 					for(int i=0;i<9 && count<=noc;i++) if(s.cell[i][j].isMarkType()){
-						boolean only_k=true;
-						for(int n=1;n<=9 && only_k;n++){
-							boolean n_in_k=false;
-							for(int t=0;t<noc;t++) if(n==k[t]) n_in_k=true;
-							if(!n_in_k && s.cell[i][j].isMark(n))
-								only_k=false;
-						}
-						if(only_k) m[count++]=i; //found
+						if((s.cell[i][j].mark & T) ==0) m[count++]=i;
 					}
 					if(count==noc){//clear
 						boolean unmark=false;
@@ -436,14 +406,7 @@ public class Solver {
 				for(int bi=0;bi<9;bi+=3) for(int bj=0;bj<9;bj+=3){
 					int count=0;int[] m=new int[5];
 					for(int b=0;b<9 && count<=noc;b++) if(s.cell[bi+b/3][bj+b%3].isMarkType()){
-						boolean only_k=true;
-						for(int n=1;n<=9 && only_k;n++){
-							boolean n_in_k=false;
-							for(int t=0;t<noc;t++) if(n==k[t]) n_in_k=true;
-							if(!n_in_k && s.cell[bi+b/3][bj+b%3].isMark(n))
-								only_k=false;
-						}
-						if(only_k) m[count++]=b;//found
+						if((s.cell[bi+b/3][bj+b%3].mark & T) ==0) m[count++]=b;
 					}
 					if(count==noc){
 						boolean unmark=false;
@@ -461,7 +424,6 @@ public class Solver {
 		}
 		return false;
 	}
-	
 	
 	//NEED TEST
 	static boolean hiddenTripleQuad(int noc,Sudoku s){
@@ -540,7 +502,6 @@ public class Solver {
 		return false;
 	}
 	
-	
 	static boolean xwing(Sudoku s){
 		int c;int[][] m=new int[9][3];
 		for(int n=1;n<=9;n++){
@@ -590,14 +551,225 @@ public class Solver {
 		return false;
 	}
 	
-	//#######################################################################################
+	static boolean samehouse(int i1,int j1,int i2,int j2){
+		return i1==i2 || j1==j2 || ( (i1/3*3==i2/3*3)&&(j1/3*3==j2/3*3) );
+	}
+	static boolean xywing(Sudoku s){
+		//found all 2
+		int c=0;int[] m=new int[81];int[] mn=new int[81];
+		for(int i=0;i<9;i++) for(int j=0;j<9;j++) if(s.cell[i][j].isMarkType()){
+			int cn=0;mn[c]=0;
+			for(int n=1;n<=9 && cn<=2;n++)
+				if(s.cell[i][j].isMark(n)) {cn++;mn[c]|=1<<n;}
+			if(cn==2) m[c++]=i*10+j;
+		}
+		for(int xz=0;xz<c;xz++) for(int xy=0;xy<c;xy++) if(xz!=xy)
+			if(mn[xz]!=mn[xy] && (mn[xz]&mn[xy])!=0 && samehouse(m[xz]/10,m[xz]%10,m[xy]/10,m[xy]%10)){
+					int x;for(x=1;!((1<<x)==(mn[xz]&mn[xy]));x++);
+					int z;for(z=1;!((1<<z)==(mn[xz]^(1<<x)));z++);
+					int y;for(y=1;!((1<<y)==(mn[xy]^(1<<x)));y++);
+					for(int yz=0;yz<c;yz++) if(yz!=xz && yz!=xy)
+						if(mn[yz]==((1<<y)|(1<<z)) && samehouse(m[xy]/10,m[xy]%10,m[yz]/10,m[yz]%10)){
+							boolean unmarked=false;
+							for(int i=0;i<9;i++) for(int j=0;j<9;j++) if(s.cell[i][j].isMark(z))
+								if(i*10+j!=m[xz] && i*10+j!=m[yz])
+									if(samehouse(i,j,m[xz]/10,m[xz]%10)) if(samehouse(i,j,m[yz]/10,m[yz]%10)) {
+										s.cell[i][j].clearMark(z);unmarked=true;
+									}
+							if(unmarked) return true;
+						}
+				}
+		return false;
+	}
+	
+	static boolean finned_xwing(Sudoku s){
+		int[] m=new int[9] ,c=new int[9];
+		for(int n=1;n<=9;n++){
+			//row
+			for(int i=0;i<9;i++){
+				m[i]=0;c[i]=0;
+				for(int j=0;j<9;j++) if(s.cell[i][j].isMark(n))
+				{ m[i]|=1<<j;c[i]++; }
+			}
+			for(int i1=0;i1<9;i1++) if(c[i1]==2){
+				int j1;for(j1=0;(m[i1]&(1<<j1))==0;j1++);
+				int j2;for(j2=j1+1;(m[i1]&(1<<j2))==0;j2++);
+				for(int i2=0;i2<9;i2++) if(i2!=i1){
+					if((m[i2]&(1<<j1))!=0){
+						//check block of i2 j2
+						int bi=i2/3*3,bj=j2/3*3;
+						boolean ok=true;
+						for(int j=0;j<9;j++) if(j!=j1 && !(bj<=j && j<bj+3))
+							if(s.cell[i2][j].isMark(n)) ok=false;
+						if(ok){
+							boolean unmarked=false;
+							for(int i=bi;i<bi+3;i++) if(i!=i1 && i!=i2)
+								if(s.cell[i][j2].isMark(n))
+								{s.cell[i][j2].clearMark(n);unmarked=true;}
+							//						System.out.printf("%d %d %d %d\n",i1,i2,j1,j2);
+							//						System.out.println("00");
+							if(unmarked) return true;
+						}
+					}
+					if((m[i2]&(1<<j2))!=0){
+						//check block of i2 j1
+						int bi=i2/3*3,bj=j1/3*3;
+						boolean ok=true;
+						for(int j=0;j<9;j++) if(j!=j2 && !(bj<=j && j<bj+3))
+							if(s.cell[i2][j].isMark(n)) ok=false;
+						if(!ok) continue;
+						boolean unmarked=false;
+						for(int i=bi;i<bi+3;i++) if(i!=i1 && i!=i2)
+							if(s.cell[i][j1].isMark(n))
+							{s.cell[i][j1].clearMark(n);unmarked=true;}
+//						System.out.println("01");
+						if(unmarked) return true;
+					}
+				}
+			}
+			//row
+			for(int j=0;j<9;j++){
+				m[j]=0;c[j]=0;
+				for(int i=0;i<9;i++) if(s.cell[i][j].isMark(n))
+				{ m[j]|=1<<i;c[j]++; }
+			}
+			for(int j1=0;j1<9;j1++) if(c[j1]==2){
+				int i1;for(i1=0;(m[j1]&(1<<i1))==0;i1++);
+				int i2;for(i2=i1+1;(m[j1]&(1<<i2))==0;i2++);
+				for(int j2=0;j2<9;j2++) if(j2!=j1){
+					if((m[j2]&(1<<i1))!=0){
+						//check block of i2 j2
+						int bi=i2/3*3,bj=j2/3*3;
+						boolean ok=true;
+						for(int i=0;i<9;i++) if(i!=i1 && !(bi<=i && i<bi+3))
+							if(s.cell[i][j2].isMark(n)) ok=false;
+						if(ok){
+							boolean unmarked=false;
+							for(int j=bj;j<bj+3;j++) if(j!=j1 && j!=j2)
+								if(s.cell[i2][j].isMark(n))
+								{s.cell[i2][j].clearMark(n);unmarked=true;}
+							//						System.out.println("10");
+							if(unmarked) return true;
+						}
+					}
+					if((m[j2]&(1<<i2))!=0){
+						//check block of i1 j2
+						int bi=i1/3*3,bj=j2/3*3;
+						boolean ok=true;
+						for(int i=0;i<9;i++) if(i!=i2 && !(bi<=i && i<bi+3))
+							if(s.cell[i][j2].isMark(n)) ok=false;
+						if(!ok) continue;
+						boolean unmarked=false;
+						for(int j=bj;j<bj+3;j++) if(j!=j1 && j!=j2)
+							if(s.cell[i1][j].isMark(n))
+							{s.cell[i1][j].clearMark(n);unmarked=true;}
+//						System.out.println("11");
+						if(unmarked) return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	static boolean Swordfish_Jellyfish(int N,Sudoku s){
+		int[] a=new int[N],ma=new int[N],m=new int[9],pos=new int[9];
+		for(int n=1;n<=9;n++){
+			//row
+			for(int i=0;i<9;i++){
+				m[i]=0;// bit of row
+				for(int j=0;j<9;j++) if(s.cell[i][j].isMark(n))
+					m[i]|=1<<j;
+			}
+			//init
+			for(int i=0;i<N;i++) {a[i]=i;ma[i]=9-N+i;}
+			while(true){
+				//do
+				int mm=0;
+				boolean marked=true;
+				for(int i=0;i<N;i++)
+					if(m[a[i]]==0) {marked=false;break;}
+					else mm|=m[a[i]];
+				int c2=0;
+				for(int j=0;j<9;j++)//count of 1 in mm
+					if((mm&(1<<j))!=0) pos[c2++]=j;
+				if(marked && c2==N){//found
+					boolean unmarked=false;
+					for(int i=0;i<9;i++){
+						boolean in_a=false;
+						for(int k=0;k<N;k++) if(a[k]==i) {in_a=true;break;}
+						if(in_a) continue;
+						//unmark
+						for(int k=0;k<N;k++) if(s.cell[i][pos[k]].isMark(n))
+						{s.cell[i][pos[k]].clearMark(n);unmarked=true;}
+					}
+//					System.out.println(".n:"+n);
+					if(unmarked) return true;
+				}
+				//next
+				boolean found=false;
+				for(int i=N-1;i>=0;i--)
+					if(a[i]<ma[i]){
+						a[i]++;
+						for(int j=i+1;j<N;j++)
+							a[j]=a[j-1]+1;
+						found=true;
+						break;
+					}
+				if(!found) break;
+			}
+			//column
+			for(int j=0;j<9;j++){
+				m[j]=0;// bit of row
+				for(int i=0;i<9;i++) if(s.cell[i][j].isMark(n))
+					m[j]|=1<<i;
+			}
+			//init
+			for(int i=0;i<N;i++) {a[i]=i;ma[i]=9-N+i;}
+			while(true){
+				//do
+				int mm=0;
+				boolean marked=true;
+				for(int j=0;j<N;j++)
+					if(m[a[j]]==0) {marked=false;break;}
+					else mm|=m[a[j]];
+				int c2=0;
+				for(int i=0;i<9;i++)//count of 1 in mm
+					if((mm&(1<<i))!=0) pos[c2++]=i;
+				if(marked && c2==N){//found
+					boolean unmarked=false;
+					for(int j=0;j<9;j++){
+						boolean in_a=false;
+						for(int k=0;k<N;k++) if(a[k]==j) {in_a=true;break;}
+						if(in_a) continue;
+						//unmark
+						for(int k=0;k<N;k++) if(s.cell[pos[k]][j].isMark(n))
+						{s.cell[pos[k]][j].clearMark(n);unmarked=true;}
+					}
+//					System.out.println(".n:"+n);
+					if(unmarked) return true;
+				}
+				//next
+				boolean found=false;
+				for(int i=N-1;i>=0;i--)
+					if(a[i]<ma[i]){
+						a[i]++;
+						for(int j=i+1;j<N;j++)
+							a[j]=a[j-1]+1;
+						found=true;
+					}
+				if(!found) break;
+			}
+		}
+		return false;
+	}
+//##################################################################################################################
 	static boolean checkdlx(Sudoku s){
 		int[][] m=new int[10][10];
 		for(int i=0;i<9;i++) for(int j=0;j<9;j++)
 				m[i][j]=(s.cell[i][j].isOnNum())?s.cell[i][j].getNum():0;
 		return Dlx.getCount(m)==1;
 	}
-	
 	
 	public static boolean check(Sudoku s){
 		int mr,mc;
@@ -727,6 +899,10 @@ public class Solver {
 			if(hiddenTripleQuad(3,su)){ continue; }
 //			if(hiddenTripleQuad(4,su)){ continue; }
 			if(xwing(su)){ continue; }
+			if(xywing(su)){ continue; }
+			if(finned_xwing(su)){ continue; }
+			if(Swordfish_Jellyfish(3,su)){ continue; }
+			if(Swordfish_Jellyfish(4,su)){ continue; }
 			if(level<4) level=4;
 			break;
 		}
@@ -734,9 +910,10 @@ public class Solver {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Documents and Settings\\shenchao\\×ÀÃæ\\Levels\\Level 5.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("C:\\Documents and Settings\\shenchao\\×ÀÃæ\\Levels\\Level 6.txt"));
 		int zu=0,solved=0,failed=0,unvaild=0;
 		int[] levelcount=new int[5];
+		long timesum=0,times=0;
 		while(br.ready()){
 			Sudoku su=new Sudoku();
 			for(int i=0;i<9;i++){
@@ -748,8 +925,8 @@ public class Solver {
 			}
 			//////SKIP////////
 			++zu;
-			//			if(zu<487) continue;
-			//			else if(zu>487) return;
+//			if(zu<945) continue;
+//			else if(zu>945) return;
 			if(!checkdlx(su)) {unvaild++;continue;}
 //			else System.out.printf("zu:%d\n",zu);
 			//////SKIP////////
@@ -757,11 +934,10 @@ public class Solver {
 			int i,j,n;
 			int level=1;
 			boolean automarked=false;
-			long start=System.currentTimeMillis(); 
 			while(true){
 				if(checkfull(su)) break;
 				if(!checkdlx(su)){
-					System.out.println("WARNING!!!");
+					System.out.println("WARNING!!! zu:"+zu);
 					su.p();
 					return;
 				}
@@ -800,7 +976,7 @@ public class Solver {
 					continue;
 				}
 				if(hiddenPair(su)){
-					//					System.out.println("Hidden Pair");
+//										System.out.println("Hidden Pair");
 					continue;
 				}
 				if(lockedCandidates(su)){
@@ -808,32 +984,52 @@ public class Solver {
 					continue;
 				}
 				if(level<3) level=3;
-				if(nakedTripleQuad(3,su)){
-					//					System.out.println("Naked Triple");
+				if(nakedTripleQuad(3,su)){//NEED OPTIMIZED
+//					System.out.println("Naked Triple");
 					continue;
 				}
-//				if(nakedTripleQuad(4,su)){
-//					//					System.out.println("Naked Quad");
-//					continue;
-//				}
+				if(nakedTripleQuad(4,su)){
+//					System.out.println("Naked Quad");
+					continue;
+				}
 				if(hiddenTripleQuad(3,su)){
-					//						System.out.println("Hidden Triple");
+//					System.out.println("Hidden Triple");
 					continue;
 				}
-//				if(hiddenTripleQuad(4,su)){
-//					//						System.out.println("Hidden Quad");
-//					continue;
-//				}
+				if(hiddenTripleQuad(4,su)){
+//					System.out.println("Hidden Quad");
+					continue;
+				}
 				if(xwing(su)){
-					//						System.out.println("XWing");
+//					System.out.println("XWing");
+					continue;
+				}
+				if(xywing(su)){
+//					System.out.println("XyWing");
+					continue;
+				}
+				if(finned_xwing(su)){
+//					System.out.println("Finned XWing");
+					continue;
+				}
+//				if(zu==945) su.p();
+				long start=System.currentTimeMillis(); 
+				if(Swordfish_Jellyfish(3,su)){
+					timesum+=System.currentTimeMillis()-start;times++;
+					System.out.println("Swordfish");
+//					if(zu==945) su.p();
+					continue;
+				}
+				if(Swordfish_Jellyfish(4,su)){
+					System.out.println("Jellyfish");
 					continue;
 				}
 				if(level<4) level=4;
 				break;
 			}
-			long timeused=System.currentTimeMillis()-start; 
-			System.out.println(timeused+"\tms");
-			if(timeused>50) {System.out.println("TOO LONG TIME !!!");return;}
+//			long timeused=System.currentTimeMillis()-start; 
+//			System.out.println(timeused+"\tms");
+//			if(timeused>50) {System.out.println("TOO LONG TIME !!!");return;}
 			levelcount[level]++;
 			if(check(su)){
 				solved++;
@@ -841,11 +1037,14 @@ public class Solver {
 			}
 			else {
 				failed++;
-				//					System.out.println("++++++++false++++++++");
-				//					su.p();
-				//					return;
+//				su.p();
+//				System.out.println("Fail on:"+zu);
+//				System.out.println("++++++++false++++++++");
+//				su.p();
+//				return;
 			}
 		}
+		System.out.printf("times:%d time:%d per:%f\n",times,timesum,timesum*1.0/times);
 		System.out.printf("Solved/failed/unvaild/all:%d/[%d]/%d/%d\n",solved,failed,unvaild,zu);
 		System.out.printf("L1/L2/L3/L4:%d/%d/%d/%d\n",levelcount[1],levelcount[2],levelcount[3],levelcount[4]);
 	}

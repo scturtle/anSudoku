@@ -4,13 +4,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import sct.Lib.Automark;
-import sct.Lib.Sudoku;
 import sct.Lib.Cell;
+import sct.Lib.Sudoku;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -37,14 +36,17 @@ public class PlayActivity extends Activity {
 
 	Timer timer=new Timer();
 	int time=0;
-	DecimalFormat f=new DecimalFormat("00");
 	//handle the msg to update time
 	Handler timerHandler = new Handler(){     
+		private String format(int n){if(n<10) return "0"+n; else return ""+n;}
 		public void handleMessage(Message msg) {     
 			switch (msg.what) {         
 			case 29008:
 				int h=time/60/60,m=time/60%60,sec=time%60;
-				tvtime.setText(f.format(h)+":"+f.format(m)+":"+f.format(sec));
+				if(h>0)
+					tvtime.setText(format(h)+":"+format(m)+":"+format(sec));
+				else
+					tvtime.setText(format(m)+":"+format(sec));
 				++time;
 				break;
 			}
